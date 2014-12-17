@@ -89,13 +89,15 @@ int DSPShieldClass::disableFilter()
 		res = shieldMailbox.transmit((byte*)message,2);
 	}
 }
-int DSPShieldClass::setIIRCoefficients(int channel, int order, int* coefficients)
+int DSPShieldClass::setIIRCoefficients(int channel, int type, int order, int* coefficients)
 {
-	int message[3*order+6]; //ints are 2 bytes each, so 6 bytes long
+	#define COEFFS_PER_BIQUAD 7
+	int message[COEFFS_PER_BIQUAD*order/2+8]; //ints are 2 bytes each, so 6 bytes long
 	message[0] = 7;
 	message[1] = channel;
 	message[2] = order;
-	memcpy(message+3,coefficients,6*order);
+	message[3] = type;
+	memcpy(message+4,coefficients,COEFFS_PER_BIQUAD*order);
 	//shieldMailbox.transmit((byte*)message,6*order+6);
 	int res = 0;
 	int tryCount = 0;
@@ -106,7 +108,31 @@ int DSPShieldClass::setIIRCoefficients(int channel, int order, int* coefficients
 		{
 			break;
 		}
-		res = shieldMailbox.transmit((byte*)message,6*order+6);
+		res = shieldMailbox.transmit((byte*)message,COEFFS_PER_BIQUAD*order+8);
+	}
+}
+int DSPShieldClass::setIIRCoefficients(int channel, int type, int order1, int* coefficients1, int order2, int* coefficients2)
+{
+	#define COEFFS_PER_BIQUAD 7
+	int message[COEFFS_PER_BIQUAD*order1/2+COEFFS_PER_BIQUAD*order2/2+10]; //ints are 2 bytes each, so 6 bytes long
+	message[0] = 18;
+	message[1] = channel;
+	message[2] = order1;
+	message[3] = order2;
+	message[4] = type;
+	memcpy(message+5,coefficients1,COEFFS_PER_BIQUAD*order1);
+	memcpy(message+5+COEFFS_PER_BIQUAD*order,coefficients2,COEFFS_PER_BIQUAD*order2);
+	//shieldMailbox.transmit((byte*)message,6*order+6);
+	int res = 0;
+	int tryCount = 0;
+	while(res == 0)
+	{
+		tryCount++;
+		if(tryCount > MAX_TRIES)
+		{
+			break;
+		}
+		res = shieldMailbox.transmit((byte*)message,COEFFS_PER_BIQUAD*order1+COEFFS_PER_BIQUAD*order2+10);
 	}
 }
 int DSPShieldClass::setIIRFilter(int channel, int pass, int response, int cutoff1, int cutoff2)
@@ -373,4 +399,34 @@ int DSPShieldClass::spectrumStop(int channel)
 		res = shieldMailbox.transmit((byte*)message,4);
 	}
 	shieldMailbox.detachHandler();
+}
+
+int displayPrint(char* printString)
+{
+	int message[256];
+	int strLen;
+	for(strLen = 0; strLen < 256; strLen++) //compute string length of null terminated string
+	{
+		if(printString[i] == '\0')
+			break;
+	}
+	message[0] = 17; //message type. 17 is display print
+	message[1] = 0;
+
+	//should pack chars into ints, and DSP will automatically unpack.
+	//Check if this works.
+	
+	memcpy((message+2),&printString,strLen);
+	
+	int res = 0;
+	int tryCount = 0;
+	while(res == 0)
+	{
+		tryCount++;
+		if(tryCount > MAX_TRIES)
+		{
+			break;
+		}
+		res = shieldMailbox.transmit((byte*)message,strLen+4);
+	}
 }

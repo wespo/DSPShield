@@ -67,7 +67,8 @@ public:
 	int disableFilter();
 	int setInputGain(float dB);
 	int setOutputGain(float dB);
-	int setIIRCoefficients(int channel, int order, int* coefficients);
+	int setIIRCoefficients(int channel, int type, int order, int* coefficients);
+	int setIIRCoefficients(int channel, int type, int order1, int* coefficients1, int order2, int* coefficients2);
 	int setIIRFilter(int channel, int pass, int response, int cutoff1, int cutoff2);
 	int setIIRFilter(int channel, int pass, int response, int cutoff1);
 	int setFIRCoefficients(int channel, int order, int* coefficients);
@@ -84,6 +85,7 @@ public:
 	int spectrumStart(int channel, int interval, int source, int complex, int numPoints, int windowType, void (*callbackFunction)());
 	int spectrumStart(int channel, int interval, int source, void (*callbackFunction)());
 	int spectrumStop(int channel);
+	int displayPrint(char* printString);
 private:
 
 };
