@@ -114,14 +114,14 @@ int DSPShieldClass::setIIRCoefficients(int channel, int type, int order, int* co
 int DSPShieldClass::setIIRCoefficients(int channel, int type, int order1, int* coefficients1, int order2, int* coefficients2)
 {
 	#define COEFFS_PER_BIQUAD 7
-	int message[COEFFS_PER_BIQUAD*order1/2+COEFFS_PER_BIQUAD*order2/2+10]; //ints are 2 bytes each, so 6 bytes long
+	int message[10]; //ints are 2 bytes each, so 6 bytes long COEFFS_PER_BIQUAD*order1/2+COEFFS_PER_BIQUAD*order2/2+
 	message[0] = 18;
 	message[1] = channel;
 	message[2] = order1;
 	message[3] = order2;
 	message[4] = type;
-	memcpy(message+5,coefficients1,COEFFS_PER_BIQUAD*order1);
-	memcpy(message+5+COEFFS_PER_BIQUAD*order,coefficients2,COEFFS_PER_BIQUAD*order2);
+	//memcpy(message+5,coefficients1,COEFFS_PER_BIQUAD*order1);
+	//memcpy(message+5+COEFFS_PER_BIQUAD*order1,coefficients2,COEFFS_PER_BIQUAD*order2);
 	//shieldMailbox.transmit((byte*)message,6*order+6);
 	int res = 0;
 	int tryCount = 0;
@@ -132,7 +132,7 @@ int DSPShieldClass::setIIRCoefficients(int channel, int type, int order1, int* c
 		{
 			break;
 		}
-		res = shieldMailbox.transmit((byte*)message,COEFFS_PER_BIQUAD*order1+COEFFS_PER_BIQUAD*order2+10);
+		res = shieldMailbox.transmit((byte*)message,10); //COEFFS_PER_BIQUAD*order1+COEFFS_PER_BIQUAD*order2+
 	}
 }
 int DSPShieldClass::setIIRFilter(int channel, int pass, int response, int cutoff1, int cutoff2)
@@ -401,22 +401,30 @@ int DSPShieldClass::spectrumStop(int channel)
 	shieldMailbox.detachHandler();
 }
 
-int displayPrint(char* printString)
+int DSPShieldClass::displayPrint(char* printString)
 {
 	int message[256];
 	int strLen;
 	for(strLen = 0; strLen < 256; strLen++) //compute string length of null terminated string
 	{
-		if(printString[i] == '\0')
+		if(printString[strLen] == '\0')
+		{
+			strLen++;
 			break;
+		}
 	}
 	message[0] = 17; //message type. 17 is display print
 	message[1] = 0;
 
 	//should pack chars into ints, and DSP will automatically unpack.
 	//Check if this works.
-	
-	memcpy((message+2),&printString,strLen);
+	memcpy((message+2),printString,strLen);
+
+	// Serial.begin(115200);
+	// Serial.println(printString);
+	// Serial.print(strLen);
+	// Serial.print("Sent: ");
+	// Serial.print((char*)(message+4));
 	
 	int res = 0;
 	int tryCount = 0;
