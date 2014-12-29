@@ -113,15 +113,16 @@ int DSPShieldClass::setIIRCoefficients(int channel, int type, int order, int* co
 }
 int DSPShieldClass::setIIRCoefficients(int channel, int type, int order1, int* coefficients1, int order2, int* coefficients2)
 {
+	#define CONTROL_WORDS 2*5
 	#define COEFFS_PER_BIQUAD 7
-	int message[10]; //ints are 2 bytes each, so 6 bytes long COEFFS_PER_BIQUAD*order1/2+COEFFS_PER_BIQUAD*order2/2+
+	int message[COEFFS_PER_BIQUAD*order2/2+COEFFS_PER_BIQUAD*order1/2+CONTROL_WORDS]; //ints are 2 bytes each, so 6 bytes long COEFFS_PER_BIQUAD*order1/2+COEFFS_PER_BIQUAD*order2/2+
 	message[0] = 18;
 	message[1] = channel;
 	message[2] = order1;
 	message[3] = order2;
 	message[4] = type;
-	//memcpy(message+5,coefficients1,COEFFS_PER_BIQUAD*order1);
-	//memcpy(message+5+COEFFS_PER_BIQUAD*order1,coefficients2,COEFFS_PER_BIQUAD*order2);
+	memcpy(message+CONTROL_WORDS/2,coefficients1,COEFFS_PER_BIQUAD*order1);
+	memcpy(message+CONTROL_WORDS/2+COEFFS_PER_BIQUAD*order1/2,coefficients2,COEFFS_PER_BIQUAD*order2);
 	//shieldMailbox.transmit((byte*)message,6*order+6);
 	int res = 0;
 	int tryCount = 0;
@@ -132,31 +133,18 @@ int DSPShieldClass::setIIRCoefficients(int channel, int type, int order1, int* c
 		{
 			break;
 		}
-		res = shieldMailbox.transmit((byte*)message,10); //COEFFS_PER_BIQUAD*order1+COEFFS_PER_BIQUAD*order2+
+		res = shieldMailbox.transmit((byte*)message,COEFFS_PER_BIQUAD*order1+COEFFS_PER_BIQUAD*order2+CONTROL_WORDS);
 	}
 }
-int DSPShieldClass::setIIRFilter(int channel, int pass, int response, int cutoff1, int cutoff2)
+int DSPShieldClass::setIIRFilter(int channel, int pass, int response, int order, int cutoff)
 {
-	int message[5]; //ints are 2 bytes each, so 6 bytes long
-	if(pass == HIGH_PASS)
-	{
-		message[0] = 8;
-	}
-	else
-	{
-		message[0] = 9;
-	}
-	message[1] = channel;
-	message[2] = response;
-	message[3] = cutoff1;
-	message[4] = cutoff2;
-	// if(cutoff2 > 0)
-	// 	shieldMailbox.transmit((byte*)message,10);
-	// else
-	// 	shieldMailbox.transmit((byte*)message,8);
-	int mLen = 8;
-	if(cutoff2 > 0)
-		mLen = 10;
+	int message[6]; //ints are 2 bytes each, so 6 bytes long
+	message[0] = 8;
+	message[1] = channel; //CHAN_LEFT, CHAN_RIGHT, CHAN_BOTH
+	message[2] = pass; //BAND_PASS, BAND_STOP
+	message[3] = response; //BUTTERWORTH, BESSEL, ELLIPTICAL, CHEBYSHEV
+	message[4] = order;
+	message[5] = cutoff;
 
 	int res = 0;
 	int tryCount = 0;
@@ -167,13 +155,32 @@ int DSPShieldClass::setIIRFilter(int channel, int pass, int response, int cutoff
 		{
 			break;
 		}
-		res = shieldMailbox.transmit((byte*)message,mLen);
+		res = shieldMailbox.transmit((byte*)message,12);
+	}
+}
+int DSPShieldClass::setIIRFilter(int channel, int pass, int response, int order, int cutoff1, int cutoff2)
+{
+	int message[7]; //ints are 2 bytes each, so 6 bytes long
+	message[0] = 9;
+	message[1] = channel; //CHAN_LEFT, CHAN_RIGHT, CHAN_BOTH
+	message[2] = pass; //BAND_PASS, BAND_STOP
+	message[3] = response; //BUTTERWORTH, BESSEL, ELLIPTICAL, CHEBYSHEV
+	message[4] = order;
+	message[5] = cutoff1;
+	message[6] = cutoff2;
+
+	int res = 0;
+	int tryCount = 0;
+	while(res == 0)
+	{
+		tryCount++;
+		if(tryCount > MAX_TRIES)
+		{
+			break;
+		}
+		res = shieldMailbox.transmit((byte*)message,14);
 	}
 
-}
-int DSPShieldClass::setIIRFilter(int channel, int pass, int response, int cutoff1)
-{
-	setIIRFilter(channel, pass, response, cutoff1, -1);
 }
 int DSPShieldClass::setFIRCoefficients(int channel, int order, int* coefficients)
 {

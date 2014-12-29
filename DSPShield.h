@@ -21,6 +21,7 @@
 #include "mailbox.h"
 #include <Arduino.h>
 
+#define ALL_PASS 0
 #define LOW_PASS 1
 #define HIGH_PASS 2
 #define BAND_PASS 3
@@ -56,6 +57,11 @@
 #define SPECTRUM_COMPLEX 0
 #define SPECTRUM_MAGNITUDE 1
 
+#define TYPE_BUTTER 0
+#define TYPE_BESSEL 1
+#define TYPE_ELLIP 2
+#define TYPE_CHEBY 3
+
 
 
 class DSPShieldClass {
@@ -69,8 +75,8 @@ public:
 	int setOutputGain(float dB);
 	int setIIRCoefficients(int channel, int type, int order, int* coefficients);
 	int setIIRCoefficients(int channel, int type, int order1, int* coefficients1, int order2, int* coefficients2);
-	int setIIRFilter(int channel, int pass, int response, int cutoff1, int cutoff2);
-	int setIIRFilter(int channel, int pass, int response, int cutoff1);
+	int setIIRFilter(int channel, int pass, int response, int order, int cutoff1, int cutoff2);
+	int setIIRFilter(int channel, int pass, int response, int order, int cutoff);
 	int setFIRCoefficients(int channel, int order, int* coefficients);
 	int setFIRFilter(int channel, int pass, int order, int cutoff1, int cutoff2);
 	int setFIRFilter(int channel, int pass, int order, int cutoff1);
