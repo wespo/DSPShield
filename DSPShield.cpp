@@ -55,6 +55,36 @@ int DSPShieldClass::stopLoopback()
 		res = shieldMailbox.transmit((byte*)message,2);
 	}
 }
+int DSPShieldClass::setInputGain(int dB)
+{
+	int message[3] = {21, CHAN_BOTH, dB};
+	int res = 0;
+	int tryCount = 0;
+	while(res == 0)
+	{
+		tryCount++;
+		if(tryCount > MAX_TRIES)
+		{
+			break;
+		}
+		res = shieldMailbox.transmit((byte*)message,6);
+	}
+}
+int DSPShieldClass::setOutputVolume(int percent)
+{
+	int message[3] = {20, CHAN_BOTH, percent};
+	int res = 0;
+	int tryCount = 0;
+	while(res == 0)
+	{
+		tryCount++;
+		if(tryCount > MAX_TRIES)
+		{
+			break;
+		}
+		res = shieldMailbox.transmit((byte*)message,6);
+	}
+}
 int DSPShieldClass::disableFilter(int channel)
 {
 	int message[2] = {6, CHAN_BOTH};

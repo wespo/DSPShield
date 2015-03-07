@@ -71,8 +71,8 @@ public:
 	int stopLoopback();
 	int disableFilter(int channel);
 	int disableFilter();
-	int setInputGain(float dB);
-	int setOutputGain(float dB);
+	int setInputGain(int dB);
+	int setOutputVolume(int percent);
 	int setIIRCoefficients(int channel, int type, int order, int* coefficients);
 	int setIIRCoefficients(int channel, int type, int order1, int* coefficients1, int order2, int* coefficients2);
 	int setIIRFilter(int channel, int pass, int response, int order, int cutoff1, int cutoff2);
