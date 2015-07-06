@@ -10,7 +10,8 @@ void setup() {
   Serial.begin(921600);
   DSPShield.init(); //initialize delays to wait for DSP to boot up
   DSPShield.startLoopback();
-
+  //DSPShield.toneStart(CHAN_BOTH, 1000, 0.2, MODE_REPLACE, WAV_SIN);
+  
   /* Spectrum Start, starts the DSP Shield sending back the Spectrum (FFT) of the recieved sound to the Arduino for use
   spectrumStart(int channel, int interval, int source, int complex, int numPoints, int windowType, void (*callbackFunction)());
   spectrumStart(int channel, int interval, int source, void (*callbackFunction)());
@@ -47,7 +48,7 @@ void setup() {
   callbackFunction:
   name of a function on the Arduino to call when a new spectrum is ready.
   */
-  DSPShield.spectrumStart(CHAN_RIGHT, 50, SOURCE_OUTPUT, SPECTRUM_MAGNITUDE, 512, WINDOW_BLACKMAN, printSpec);
+  DSPShield.spectrumStart(CHAN_RIGHT, 20, SOURCE_OUTPUT, SPECTRUM_MAGNITUDE, 128, WINDOW_BLACKMAN, printSpec);
 
 }
 

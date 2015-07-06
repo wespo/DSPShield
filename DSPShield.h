@@ -62,7 +62,9 @@
 #define TYPE_ELLIP 2
 #define TYPE_CHEBY 3
 
-
+#define MATH_NONE   0
+#define MATH_SUB    1
+#define MATH_ADD    2
 
 class DSPShieldClass {
 public:
@@ -91,6 +93,8 @@ public:
 	int spectrumStart(int channel, int interval, int source, int complex, int numPoints, int windowType, void (*callbackFunction)());
 	int spectrumStart(int channel, int interval, int source, void (*callbackFunction)());
 	int spectrumStop(int channel);
+	int channelMath(int channel, int operation);
+	int reverb(int channel, int delay);
 	int displayPrint(char* printString);
 private:
 

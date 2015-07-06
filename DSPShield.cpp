@@ -475,3 +475,35 @@ int DSPShieldClass::displayPrint(char* printString)
 		res = shieldMailbox.transmit((byte*)message,strLen+4);
 	}
 }
+
+int DSPShieldClass::channelMath(int channel, int operation)
+{
+	int message[3] = {22, channel, operation};
+	int res = 0;
+	int tryCount = 0;
+	while(res == 0)
+	{
+		tryCount++;
+		if(tryCount > MAX_TRIES)
+		{
+			break;
+		}
+		res = shieldMailbox.transmit((byte*)message,6);
+	}
+}
+
+int DSPShieldClass::reverb(int channel, int delay)
+{
+	int message[3] = {23, channel, 48*delay};
+	int res = 0;
+	int tryCount = 0;
+	while(res == 0)
+	{
+		tryCount++;
+		if(tryCount > MAX_TRIES)
+		{
+			break;
+		}
+		res = shieldMailbox.transmit((byte*)message,6);
+	}
+}
