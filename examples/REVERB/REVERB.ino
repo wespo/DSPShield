@@ -1,7 +1,7 @@
 /*
-DSP Shield Mode Channel Mathematical Operations Example
+DSP Shield Mode Reverb Example
 
-This example takes the difference of the two channels and puts the result on both channels
+This example adds a delayed version of the sound back to itself; this creates an 'echo' or 'reverb' effect
 */
 #include <SPI.h>
 #include <mailbox.h>
