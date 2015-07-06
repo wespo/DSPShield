@@ -95,7 +95,7 @@ public:
 	int spectrumStop(int channel);
 	int channelMath(int channel, int operation);
 	int removeVoice();
-	int diableRemoveVoice();
+	int disableRemoveVoice();
 	int reverb(int channel, int delay);
 	int displayPrint(char* printString);
 private:
