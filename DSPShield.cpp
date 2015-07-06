@@ -492,6 +492,15 @@ int DSPShieldClass::channelMath(int channel, int operation)
 	}
 }
 
+int DSPShieldClass::disableRemoveVoice()
+{
+	channelMath(CHAN_BOTH, MATH_SUB);
+}
+int DSPShieldClass::removeVoice()
+{
+	channelMath(CHAN_BOTH, MATH_NONE);
+}
+
 int DSPShieldClass::reverb(int channel, int delay)
 {
 	int message[3] = {23, channel, 48*delay};

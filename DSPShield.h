@@ -94,6 +94,8 @@ public:
 	int spectrumStart(int channel, int interval, int source, void (*callbackFunction)());
 	int spectrumStop(int channel);
 	int channelMath(int channel, int operation);
+	int removeVoice();
+	int diableRemoveVoice();
 	int reverb(int channel, int delay);
 	int displayPrint(char* printString);
 private:
