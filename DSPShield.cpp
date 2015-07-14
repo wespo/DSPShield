@@ -21,7 +21,6 @@ DSPShieldClass DSPShield;
 void DSPShieldClass::init()
 {
 	shieldMailbox.begin(SPI_SLAVE);
-	delay(5000);
 }
 int DSPShieldClass::startLoopback()
 {
