@@ -515,3 +515,41 @@ int DSPShieldClass::reverb(int channel, int delay)
 		res = shieldMailbox.transmit((byte*)message,6);
 	}
 }
+
+int DSPShieldClass::noiseStart(int channel, float amplitude, int sumMode)
+{
+	int message[5];
+	message[0] = 24; //start DDS
+	message[1] = channel;
+	memcpy((message+2),&amplitude,4); //get frequency
+	message[4] = sumMode;
+	int res = 0;
+	int tryCount = 0;
+	while(res == 0)
+	{
+		tryCount++;
+		if(tryCount > MAX_TRIES)
+		{
+			break;
+		}
+		res = shieldMailbox.transmit((byte*)message,10);
+	}
+}
+int DSPShieldClass::noiseStop(int channel)
+{
+	int message[2];
+	message[0] = 25; //stop DDS
+	message[1] = channel;
+	//shieldMailbox.transmit((byte*)message,4);
+	int res = 0;
+	int tryCount = 0;
+	while(res == 0)
+	{
+		tryCount++;
+		if(tryCount > MAX_TRIES)
+		{
+			break;
+		}
+		res = shieldMailbox.transmit((byte*)message,4);
+	}
+}

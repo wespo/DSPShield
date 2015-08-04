@@ -43,6 +43,9 @@
 #define WAV_SQU 1
 #define WAV_TRI 2
 #define WAV_SAW 3
+#define WAV_WHT 4
+#define WAV_USR 5
+
 
 #define MODE_REPLACE 0
 #define MODE_SUM 1
@@ -98,6 +101,8 @@ public:
 	int disableRemoveVoice();
 	int reverb(int channel, int delay);
 	int displayPrint(char* printString);
+	int noiseStart(int channel, float amplitude, int sumMode);
+	int noiseStop(int channel);
 private:
 
 };
